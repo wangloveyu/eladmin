@@ -18,25 +18,24 @@ package admin.xxx.modules.security.rest;
 import admin.xxx.annotation.rest.AnonymousDeleteMapping;
 import admin.xxx.annotation.rest.AnonymousGetMapping;
 import admin.xxx.annotation.rest.AnonymousPostMapping;
+import admin.xxx.config.RsaProperties;
 import admin.xxx.modules.security.config.bean.LoginCodeEnum;
 import admin.xxx.modules.security.config.bean.LoginProperties;
 import admin.xxx.modules.security.config.bean.SecurityProperties;
+import admin.xxx.modules.security.security.TokenProvider;
 import admin.xxx.modules.security.service.OnlineUserService;
+import admin.xxx.modules.security.service.dto.AuthUserDto;
+import admin.xxx.modules.security.service.dto.JwtUserDto;
+import admin.xxx.utils.RedisUtils;
+import admin.xxx.utils.RsaUtils;
+import admin.xxx.utils.SecurityUtils;
+import admin.xxx.utils.StringUtils;
 import cn.hutool.core.util.IdUtil;
 import com.wf.captcha.base.Captcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import admin.xxx.config.RsaProperties;
-import admin.xxx.exception.BadRequestException;
-import admin.xxx.modules.security.security.TokenProvider;
-import admin.xxx.modules.security.service.dto.AuthUserDto;
-import admin.xxx.modules.security.service.dto.JwtUserDto;
-import admin.xxx.utils.RsaUtils;
-import admin.xxx.utils.RedisUtils;
-import admin.xxx.utils.SecurityUtils;
-import admin.xxx.utils.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,7 +43,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -80,10 +83,10 @@ public class AuthorizationController {
         // 清除验证码
         redisUtils.del(authUser.getUuid());
         if (StringUtils.isBlank(code)) {
-            throw new BadRequestException("验证码不存在或已过期");
+           // throw new BadRequestException("验证码不存在或已过期");
         }
         if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
-            throw new BadRequestException("验证码错误");
+            //throw new BadRequestException("验证码错误");
         }
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
